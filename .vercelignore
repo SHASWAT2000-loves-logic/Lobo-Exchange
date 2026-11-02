@@ -1,0 +1,11 @@
+.env
+.env.*
+.venv
+instance
+.tmp
+.vercel
+.chrome-test-profile*
+.edge-test-profile
+.visual-check
+__pycache__
+tests
