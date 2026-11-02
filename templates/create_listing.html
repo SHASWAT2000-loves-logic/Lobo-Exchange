@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Post a listing · Lobo Exchange{% endblock %}
+{% block content %}
+  <div class="form-panel form-panel-wide mx-auto">
+    <a href="{{ url_for('browse') }}" class="small text-decoration-none fw-semibold">← Back to listings</a>
+    <header class="page-heading mt-3 mb-4">
+      <p class="eyebrow mb-2">Sell to your campus community</p>
+      <h1 class="h2 fw-bold mb-2">Post a listing</h1>
+      <p class="text-muted mb-0">Add a photo and the details students need. AI can help with wording; you decide what to publish.</p>
+    </header>
+
+    <form id="listing-form" method="post" enctype="multipart/form-data" data-suggest-url="{{ url_for('suggest_listing') }}" data-analyze-url="{{ url_for('analyze_listing') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div id="ai-ready-banner" class="ai-ready-banner alert py-2 small" role="status" hidden>AI suggestions ready. Use or dismiss the suggestions beside your fields.</div>
+
+      <section class="form-section" aria-labelledby="photo-step">
+        <div class="step-heading">
+          <span class="step-number" aria-hidden="true">1</span>
+          <div>
+            <h2 id="photo-step">Upload an item photo</h2>
+            <p>A clear photo helps other students understand what you are selling.</p>
+          </div>
+        </div>
+        <label for="image" class="form-label">Photo</label>
+        <input id="image" name="image" type="file" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" required>
+        <div class="form-text">JPEG, PNG, WebP, or GIF · Maximum 5 MB.</div>
+      </section>
+
+      <section class="form-section" aria-labelledby="details-step">
+        <div class="step-heading">
+          <span class="step-number" aria-hidden="true">2</span>
+          <div>
+            <h2 id="details-step">Add the details</h2>
+            <p>Enter what you know, then use AI for optional suggestions.</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input id="title" name="title" class="form-control" maxlength="120" value="{{ request.form.get('title', '') }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="description" class="form-control" rows="5" maxlength="5000" required>{{ request.form.get('description', '') }}</textarea>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="category" class="form-select" required>
+              <option value="">Choose a category</option>
+              {% for category in categories %}
+                <option value="{{ category }}" {% if request.form.get('category') == category %}selected{% endif %}>{{ category }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="price" class="form-label">Asking price (USD)</label>
+            <input id="price" name="price" type="number" class="form-control" min="0" max="99999999.99" step="0.01" placeholder="0.00" value="{{ request.form.get('price', '') }}" required>
+            <div id="ai-price-range" class="form-text ai-price-guidance" hidden></div>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
+          <button id="generate-ai" class="btn btn-ai" type="button">✦ Generate with AI</button>
+          <div id="ai-status" class="small" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="suggestions-step">
+        <div class="step-heading">
+          <span class="step-number" aria-hidden="true">3</span>
+          <div>
+            <h2 id="suggestions-step">Review suggestions</h2>
+            <p>If you use AI, its suggestions appear beside the fields above. Your existing entries stay in place.</p>
+          </div>
+        </div>
+        <div id="ai-estimate" class="ai-estimate alert mb-0" hidden>
+          <strong>Approximate AI price estimate</strong>
+          <p class="small mb-3">This range is guidance, not a guaranteed market value. Your asking price stays separate.</p>
+          <input type="hidden" name="original_estimated_price_low" value="{{ request.form.get('original_estimated_price_low', '') }}">
+          <input type="hidden" name="original_estimated_price_high" value="{{ request.form.get('original_estimated_price_high', '') }}">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="estimated-price-low" class="form-label">Low estimate (USD)</label>
+              <input id="estimated-price-low" name="estimated_price_low" type="number" class="form-control" min="0" step="0.01" value="{{ request.form.get('estimated_price_low', '') }}">
+            </div>
+            <div class="col-sm-6">
+              <label for="estimated-price-high" class="form-label">High estimate (USD)</label>
+              <input id="estimated-price-high" name="estimated_price_high" type="number" class="form-control" min="0" step="0.01" value="{{ request.form.get('estimated_price_high', '') }}">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="safety-step">
+        <div class="step-heading">
+          <span class="step-number" aria-hidden="true">4</span>
+          <div>
+            <h2 id="safety-step">Review before posting</h2>
+            <p>Check your final details and see any advisory safety notes before publishing.</p>
+          </div>
+        </div>
+        <button id="review-listing" class="btn btn-outline-primary" type="submit">Review before posting</button>
+        <div id="safety-status" class="small mt-2" role="status" aria-live="polite"></div>
+        <div id="safety-review" class="review-panel mt-4" hidden>
+          <h2>Review results</h2>
+          <p class="review-note small mb-2">These checks are advisory and do not prove that a listing or seller is fraudulent.</p>
+          <p id="safety-summary" class="mb-2"></p>
+          <h3 id="safety-warnings-heading" class="h6 fw-bold mt-3 mb-2" hidden>Things to consider</h3>
+          <ul id="safety-warnings" class="review-warning-list"></ul>
+          <p id="safety-unavailable" class="review-note small" hidden>The AI review is unavailable right now. Please check the listing yourself before publishing.</p>
+          <p class="eyebrow mt-4 mb-2">Step 5 · Publish when ready</p>
+          <div class="d-flex flex-wrap gap-2">
+            <button id="safety-edit" class="btn btn-outline-secondary" type="button">Keep editing</button>
+            <button id="safety-publish" class="btn btn-primary" type="button">Publish listing</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </div>
+  <script src="{{ url_for('static', filename='listing_ai.js', v='7') }}" defer></script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Join · Lobo Exchange{% endblock %}
+{% block content %}
+  <div class="form-panel mx-auto">
+    <h1 class="h2 fw-bold mb-2">Join Lobo Exchange</h1>
+    <p class="text-muted mb-4">Use your UNM email to create an account.</p>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <label for="email" class="form-label">UNM email</label>
+        <input id="email" name="email" type="email" class="form-control" placeholder="you@unm.edu" value="{{ request.form.get('email', '') }}" required autocomplete="email">
+      </div>
+      <div class="mb-4">
+        <label for="password" class="form-label">Password</label>
+        <input id="password" name="password" type="password" class="form-control" minlength="8" required autocomplete="new-password">
+        <div class="form-text">At least 8 characters.</div>
+      </div>
+      <button class="btn btn-primary w-100" type="submit">Create account</button>
+    </form>
+    <p class="mt-4 mb-0 text-center">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+{% endblock %}

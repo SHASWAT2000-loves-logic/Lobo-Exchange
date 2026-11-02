@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Log in · Lobo Exchange{% endblock %}
+{% block content %}
+  <div class="form-panel mx-auto">
+    <h1 class="h2 fw-bold mb-2">Welcome back</h1>
+    <p class="text-muted mb-4">Log in to post a listing.</p>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <label for="email" class="form-label">UNM email</label>
+        <input id="email" name="email" type="email" class="form-control" required autocomplete="email">
+      </div>
+      <div class="mb-4">
+        <label for="password" class="form-label">Password</label>
+        <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary w-100" type="submit">Log in</button>
+    </form>
+    <p class="mt-4 mb-0 text-center">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+  </div>
+{% endblock %}
