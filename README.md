@@ -18,7 +18,7 @@ Open <http://127.0.0.1:5000/>. Stop the server with `Ctrl+C`. With `DATABASE_URL
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Registration accepts addresses ending in `@unm.edu`, but does not verify mailbox ownership. Passwords are stored as hashes. Listings require a title, description, category, price, and a JPEG, PNG, WebP, or GIF image under 5 MB.
+Registration accepts addresses ending in `@unm.edu`, but does not verify mailbox ownership. Passwords are stored as hashes. Listings require a title, description, category, price, and a JPEG, PNG, WebP, or GIF image under 4 MB.
 
 ## AI listing suggestions
 

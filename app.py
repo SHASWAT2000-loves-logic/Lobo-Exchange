@@ -98,7 +98,7 @@ def create_app(test_config=None):
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         UPLOAD_FOLDER=str(Path(app.instance_path) / "uploads"),
         BLOB_READ_WRITE_TOKEN=os.environ.get("BLOB_READ_WRITE_TOKEN", ""),
-        MAX_CONTENT_LENGTH=5 * 1024 * 1024,
+        MAX_CONTENT_LENGTH=4 * 1024 * 1024,
     )
     if test_config:
         app.config.update(test_config)
@@ -321,7 +321,7 @@ def create_app(test_config=None):
     def image_too_large(error):
         if request.path in (url_for("suggest_listing"), url_for("analyze_listing")):
             return jsonify(error=AI_ERROR_MESSAGE), 413
-        return render_template("error.html", message="Upload an image smaller than 5 MB."), 413
+        return render_template("error.html", message="Upload an image smaller than 4 MB."), 413
 
     return app
 
