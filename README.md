@@ -39,3 +39,24 @@ Production environment variable names are `DATABASE_URL`, `BLOB_READ_WRITE_TOKEN
 The initial production check confirmed that the homepage, Register, Login, CSS, and JavaScript load; Neon contains the `user` and `listing` tables; and a small Blob upload and deletion succeed. A full listing workflow has not yet been exercised against production services.
 
 The app creates missing database tables with `db.create_all()` on startup, but has no schema migrations. Local SQLite records and photos are not copied to production. Listing photos in Blob are public. If Blob deletion fails after a listing is removed from the database, the object may need manual cleanup; Vercel's cache can also serve a deleted image briefly. Registration checks the `@unm.edu` address format but does not verify mailbox ownership.
+
+## Try the deployed prototype
+
+The deployed version of Lobo Exchange is available at:
+
+https://lobo-exchange.vercel.app/
+
+To try the application:
+
+1. Open the deployed website and select Register.
+2. Create an account using an unused test email address ending in `@unm.edu`, such as `grader-test123@unm.edu`.
+3. Log in with the account you created.
+4. Browse existing marketplace listings or select Post a listing to create a new one.
+5. Upload an item image and either enter the listing details manually or use Generate with AI.
+6. If information has already been entered, AI suggestions appear separately and can be accepted with Use or ignored with Dismiss.
+7. Review the approximate AI price guidance if available.
+8. Select Review before posting to check the listing for possible privacy, suspicious-content, spam-like, or unusual-price concerns.
+9. Edit the listing if needed, then publish it.
+10. Open the published listing from the Browse page to view its details. The seller who created the listing can also delete it.
+
+The current prototype checks that registration addresses end in `@unm.edu`, but it does not yet verify ownership of the email account. Therefore, an actual UNM mailbox is not required for prototype testing.
